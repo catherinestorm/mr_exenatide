@@ -3,7 +3,7 @@
 ### load outcome data
 
 out <- read_outcome_data(snps = exp$SNP,
-                         filename = str_c("~/Documents/UCL_PhD/PhD_Project/pdgwas_data/progression/",OUTCOME,"_with_eqtl_rsid.txt"),
+                         filename = str_c("data/progression/",OUTCOME,"_with_eqtl_rsid.txt"),
                          sep = ",",
                          snp_col = str_c("rsid_", EXPOSURE_DATA),
                          beta_col = "BETA",

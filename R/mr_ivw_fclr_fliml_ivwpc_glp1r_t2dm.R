@@ -1,4 +1,4 @@
-setwd('~/Documents/UCL_PhD/PhD_Project/mr_exenatide_pd/version_2020')
+
 
 EXPOSURE_DATA<-'eqtlgen'
 OUTCOME<-'t2dm_risk'
@@ -10,11 +10,20 @@ library("TwoSampleMR")
 library("dplyr")
 library("stringr")
 library("readr")
-#source("~/Documents/UCL_PhD/PhD_Project/mr_resources/papers_resources/methods/mr_fclr/FCLR.R")
-source("~/Documents/UCL_PhD/PhD_Project/mr_resources/papers_resources/methods/mr_fclr/FCLR_with_pvalue.R")
+source("FCLR_with_pvalue.R")
+library("forestplot")
 
 
-eur_maf <- read_csv("~/Documents/UCL_PhD/PhD_Project/mr_exenatide_pd/version_2020/for_clumping/EUR.frq.csv")
+# download LD reference panel for each of the 5 super-populations in the 1000 genomes reference dataset. e.g. for the European super population it has the following files:
+# from https://mrcieu.github.io/ieugwasr/articles/local_ld.html
+devtools::install_github("explodecomputer/genetics.binaRies")
+genetics.binaRies::get_plink_binary()
+
+# calculated maf frq in plink 
+# ./plink --bfile EUR --freq --out EUR
+# cat EUR.frq | sed -r 's/^\s+//g' | sed -r 's/\s+/,/g' > EUR.frq.csv
+
+eur_maf <- read_csv("EUR.frq.csv")
 
 
 # load exposure data
@@ -36,7 +45,8 @@ exp0 <- read_exposure_data(
 
 exp0 <- subset(exp0, exp0$pval.exposure < 5e-5)
 
-#exp_to_keep <- read_csv("genes_for_analysis.csv")
+# keep GLP1R only
+# GLP1R == ENSG00000112164
 exp <- subset(exp0, (exp0$exposure == "ENSG00000112164"))
 
 
@@ -44,7 +54,7 @@ exp <- subset(exp0, (exp0$exposure == "ENSG00000112164"))
 ### load outcome data
 
 out <- read_outcome_data(snps = exp$SNP,
-                         filename = "~/Documents/UCL_PhD/PhD_Project/mr_exenatide_pd/xue2018_t2dm_risk_with_eqtl_rsid.txt",
+                         filename = "data/xue2018_t2dm_risk_with_eqtl_rsid.txt",
                          sep = "\t",
                          snp_col = str_c("rsid_", EXPOSURE_DATA),
                          beta_col = "b",
@@ -70,14 +80,17 @@ dat0 <- harmonise_data(
 
 dat <- subset(dat0, dat0$mr_keep == TRUE)
 
+# clump
 clump_thresh <- 0.6
 dat <- clump_data(dat, clump_r2 = clump_thresh)
 
+# get LD matrix
 dat2 <- dat_to_MRInput(dat, get_correlation=TRUE)
 
-
+# IVW correcting for LD
 ivw <- MendelianRandomization::mr_ivw(dat2[[1]], correl=TRUE)
 
+# plot
 mrbase<- mr(dat, method_list = "mr_ivw")
 p1 <- mr_scatter_plot(mrbase, dat)
 for (i in 1:length(p1)){
@@ -85,20 +98,11 @@ for (i in 1:length(p1)){
 }
 
 
-#ld_matr<-ld_matrix(dat$SNP)
-
-#dat2 <- dat_to_MRInput(dat[!(dat$SNP == "rs1678690"),], get_correlation=TRUE)
 
 
-# calculated frq in plink on google cloud engine pdtreatment
-# ./plink --bfile for_clumping/EUR --freq --out for_clumping/EUR
-# cat for_clumping/EUR.frq | sed -r 's/^\s+//g' | sed -r 's/\s+/,/g' > for_clumping/EUR.frq.csv
-# cd /Users/catherinestorm/Documents/UCL_PhD/PhD_Project/mr_exenatide_pd/version_2020/for_clumping
-# gcloud compute scp catherinestorm@pdtreatment://home/catherinestorm/for_clumping/EUR.frq.csv .
+# FCLR and FLIML method
 
-
-
-
+# get the maf in europeans for the SNPs we have
 eur_maf_keep0 <- subset(eur_maf, eur_maf$SNP %in% dat2[[1]]@snps)
 eur_maf_keep <- as.data.frame(eur_maf_keep0)
 
@@ -122,14 +126,14 @@ all(dat2[[1]]@snps == mafs$SNP)
 
 
 
-# scree plot
+# scree plot to decide r
 pcs <- prcomp(dat2[[1]]@correlation)
 screeplot(pcs,
           type = "lines")
 
 
 
-
+# fclr and LIML
 fclr.res <- FCLR(nx = dat$samplesize.exposure,
                  ny = dat$samplesize.outcome,
                  
@@ -147,6 +151,8 @@ fclr.res <- FCLR(nx = dat$samplesize.exposure,
                  
                  r = 3)
 
+
+# put ivw, fclr and fliml into one table
 ivw_for_table <- data.frame("clump_thresh" = clump_thresh, "nsnp" = ivw@SNPs, "method"=ivw@class[1], "beta"=ivw@Estimate, "se"=ivw@StdError, "p"=ivw@Pvalue, "lo_ci" = (ivw@Estimate-1.96*ivw@StdError),  "up_ci" = (ivw@Estimate+1.96*ivw@StdError),  "het" = NA)
 fclr.res_for_table1 <- data.frame("clump_thresh" = clump_thresh,"nsnp" = NA, "method"="F-LIML", "beta"=fclr.res$fliml.est[1], "se"=fclr.res$fliml.se[1], "p"=fclr.res$fliml.pval[1], "lo_ci" = (fclr.res$fliml.est[1]-1.96*fclr.res$fliml.se[1]),  "up_ci" = (fclr.res$fliml.est[1]+1.96*fclr.res$fliml.se[1]),   "het" = NA)
 fclr.res_for_table2 <- data.frame("clump_thresh" = clump_thresh,"nsnp" = NA, "method"="F-CLR", "beta"=NA, "se"=NA, "p"=fclr.res$CLR.p[1], "lo_ci" = fclr.res$CLR.CI[1],  "up_ci" = fclr.res$CLR.CI[2],   "het" = NA)
@@ -159,7 +165,7 @@ temp <- rbind(ivw_for_table,fclr.res_for_table)
 
 
 
-# PCA
+# IVWPC method
 rho<-ld_matrix(dat$SNP)
 
 dat_keep <- subset(dat, dat$SNP %in% sub("\\_.*","", colnames(rho))) #since some SNPs may have been lost in ld matrix generation
@@ -191,17 +197,19 @@ rse.corr = sqrt(t(rse)%*%solve(pcOmega)%*%rse/(K-1)) #
 heter.stat <- (K - 1)*(rse.corr^2)
 pvalue.heter.stat <- pchisq(heter.stat, df = K-1, lower.tail = FALSE)
 
-pca <- data.frame("clump_thresh" = clump_thresh,"nsnp" = NA, "method"="PCA", "beta"=beta_IVWcorrel.pc, "se"=se_IVWcorrel.fixed.pc, "p"=pvalue, "lo_ci" = (beta_IVWcorrel.pc-1.96*se_IVWcorrel.fixed.pc),  "up_ci" = (beta_IVWcorrel.pc+1.96*se_IVWcorrel.fixed.pc), "het" = pvalue.heter.stat)
+pca <- data.frame("clump_thresh" = clump_thresh,"nsnp" = NA, "method"="IVWPC", "beta"=beta_IVWcorrel.pc, "se"=se_IVWcorrel.fixed.pc, "p"=pvalue, "lo_ci" = (beta_IVWcorrel.pc-1.96*se_IVWcorrel.fixed.pc),  "up_ci" = (beta_IVWcorrel.pc+1.96*se_IVWcorrel.fixed.pc), "het" = pvalue.heter.stat)
 
 full_data <- rbind(temp,pca)
+
+full_data$or <- exp(full_data$beta)
+full_data$or_lci95 <- exp(full_data$lo_ci)
+full_data$or_uci95 <- exp(full_data$up_ci)
 
 
 write.table(full_data, "results/full_res_r2_0.6_fclr_pca_ivw.txt", row.names = F, sep = "\t")
 
 
-full_data$or <- exp(full_data$beta)
-full_data$or_lci95 <- exp(full_data$lo_ci)
-full_data$or_uci95 <- exp(full_data$up_ci)
+
 
 
 # FOREST PLOT
@@ -216,7 +224,7 @@ format_numbers <- function(number) {
   return(result)
 }
 
-
+# format the data for the forest plot
 data <- full_data
 
 data$or_ci <- str_c(format_numbers(data$or), " (", format_numbers(data$or_lci95), ", ",format_numbers(data$or_uci95), ")")
@@ -234,9 +242,9 @@ forest_data <- data[,c("or", "or_lci95", "or_uci95", "method")]
 forest_data <- forest_data[complete.cases(forest_data),]
 forest_data <- rbind(c(NA, NA, NA, NA),forest_data) # size we have a header row we want a blank ros at the top
 
-# DATA TO DISPLAY AS NUMBETS IM THE THE FOREST PLOT
+# DATA TO DISPLAY AS NUMBER IN THE FOREST PLOT
 table_text <- data[, c("method","nsnp", "or_ci", "roundp")]
-table_text <- rbind(c("Method","No. SNPs", "OR (95% CI)", "FDR-adjusted P"), table_text)
+table_text <- rbind(c("Method","No. SNPs", "OR (95% CI)", "FDR-corrected P"), table_text)
 
 
 
@@ -263,23 +271,3 @@ forestplot(table_text, # columns to include
 dev.off()
 
 
-
-
-
-# 5e-5
-clump_thresh nsnp method       beta         se           p       clr_ci       clr_p       het
-1          0.6   14    IVW -0.2019121 0.08513517 0.017708135         <NA>          NA        NA
-2          0.6   NA F-LIML -0.2478864 0.08903123          NA -0.43, -0.08 0.004748768        NA
-3          0.6   NA    PCA -0.2071650 0.07923327 0.008932647         <NA>          NA 0.2131153
-
-
-
-# 5e-8
-clump_thresh nsnp method       beta         se          p      clr_ci       clr_p        het
-1          0.6    4    IVW -0.1879417 0.10955510 0.08625370        <NA>          NA         NA
-2          0.6   NA F-LIML -0.3394059 0.11916541         NA -0.6, -0.12 0.002765291         NA
-3          0.6   NA    PCA -0.1914234 0.08060622 0.01755862        <NA>          NA 0.07357023
-
-  
-  
-  

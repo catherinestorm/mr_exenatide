@@ -1,4 +1,4 @@
-setwd("~/Documents/UCL_PhD/PhD_Project/mr_exenatide_pd/version_2020/results")
+setwd("results")
 
 # prep
 library(dplyr)
@@ -53,7 +53,7 @@ forest_data <- rbind(c(NA, NA, NA, NA),forest_data) # size we have a header row 
 
 # DATA TO DISPLAY AS NUMBETS IM THE THE FOREST PLOT
 table_text <- data[, c("prot_gene","nsnp", "or_ci", "roundp")]
-table_text <- rbind(c("Gene", "No. SNPs", "OR (95% CI)", "FDR-adjusted P"), table_text)
+table_text <- rbind(c("Gene", "No. SNPs", "OR (95% CI)", "FDR-corrected P"), table_text)
 
 
 pdf("plots/forest_t2dm_risk.pdf", width = 23,height = 10, onefile=FALSE)
@@ -118,7 +118,7 @@ forest_data <- rbind(c(NA, NA, NA, NA),forest_data)
 # DATA TO DISPLAY AS NUMBETS IM THE THE FOREST PLOT
 table_text <- data[, c("prot_gene","nsnp", "beta_ci", "roundp")]
 #table_text <- table_text[complete.cases(table_text),]
-table_text <- rbind(c("Gene", "No. SNPs", "Beta (95% CI)", "FDR-adjusted P"), table_text)
+table_text <- rbind(c("Gene", "No. SNPs", "Beta (95% CI)", "FDR-corrected P"), table_text)
 
 
 pdf("plots/forest_bmi.pdf", width = 23,height = 10, onefile=FALSE)
@@ -178,7 +178,7 @@ forest_data <- rbind(c(NA, NA, NA, NA),forest_data)
 
 table_text <- data[, c("prot_gene","nsnp", "or_ci", "roundp")]
 #table_text <- table_text[complete.cases(table_text),]
-table_text <- rbind(c("Gene", "No. SNPs", "OR (95% CI)", "FDR-adjusted P"), table_text)
+table_text <- rbind(c("Gene", "No. SNPs", "OR (95% CI)", "FDR-corrected P"), table_text)
 
 
 pdf("plots/forest_pd_risk.pdf", width = 23,height = 13, onefile=FALSE)
@@ -239,7 +239,7 @@ forest_data <- rbind(c(NA, NA, NA, NA),forest_data)
 
 table_text <- data[, c("prot_gene","nsnp", "beta_ci", "roundp")]
 #table_text <- table_text[complete.cases(table_text),]
-table_text <- rbind(c("Gene", "No. SNPs", "Beta (95% CI)", "FDR-adjusted P"), table_text)
+table_text <- rbind(c("Gene", "No. SNPs", "Beta (95% CI)", "FDR-corrected P"), table_text)
 
 
 pdf("plots/forest_pd_aao.pdf", width = 23,height = 13, onefile=FALSE)
@@ -333,7 +333,7 @@ forest_data <- rbind(c(NA, NA, NA, NA),forest_data)
 # DATA TO DISPLAY AS NUMBETS IM THE THE FOREST PLOT
 table_text <- data[, c("prot_gene","outcome", "nsnp", "beta_ci", "roundp")]
 #table_text <- table_text[complete.cases(table_text),]
-table_text <- rbind(c("Gene","Outcome",  "No. SNPs", "Beta (95% CI)", "FDR-adjusted P"), table_text)
+table_text <- rbind(c("Gene","Outcome",  "No. SNPs", "Beta (95% CI)", "FDR-corrected P"), table_text)
 
 
 pdf("plots/forest_all.pdf", width = 30,height = 15, onefile=FALSE)
@@ -437,7 +437,7 @@ forest_data <- rbind(c(NA, NA, NA, NA),forest_data)
 # DATA TO DISPLAY AS NUMBETS IM THE THE FOREST PLOT
 table_text <- data[, c("prot_gene","outcome", "roundp")]
 #table_text <- table_text[complete.cases(table_text),]
-table_text <- rbind(c("Gene","Outcome",  "FDR-adjusted P"), table_text)
+table_text <- rbind(c("Gene","Outcome",  "FDR-corrected P"), table_text)
 
 
 pdf("/Users/catherinestorm/Documents/UCL_PhD/PhD_Project/submissions_courses_conferences/conference_parkinsons_uk_2020/forest_all.pdf", width = 7,height = 5, onefile=FALSE)

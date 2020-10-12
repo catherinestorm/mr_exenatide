@@ -18,7 +18,9 @@ If you use the code, please cite:
 1. Set up work space. Specify exposure and outcome datasets. Data Prep. ADD EQTL DATA PREP AND GWAS DATA PREP.
 
 ```mkdir data
+mkdir data/progression
 mkdir results
+mkdir results/plots
 mkdir scripts
 
 echo "eqtlgen
@@ -48,8 +50,6 @@ surv_HY3" > progression_outcomes.txt
 cat progression_outcomes.txt >> pd_outcomes.txt
 
 
-mkdir results/plots
-
 while read EXPOSURE_DATA; do
     while read OUTCOME; do
         mkdir results/plots/${EXPOSURE_DATA}_${OUTCOME}
@@ -66,7 +66,12 @@ done < non_pd_outcomes.txt
 
 
 2. Prepare the data for the Mendelian randomization analysis. Where to download, code to process data.
+```
+nohup Rscript ./mr_exenatide/R/data_prep_eqtl.R &> nohup_data_prep_eqtl.log &
 
+nohup Rscript ./mr_exenatide/R/data_prep_outcome_gwas.R &> nohup_data_prep_outcome_gwas.log &
+
+```
 
 3. Generate scripts to run the analysis.
 
@@ -99,6 +104,9 @@ done < exposure_data.txt
 4. Run the scripts
 ```
 nohup bash ./mr_exenatide/shell/run_scripts.sh &> nohup_run_scripts.log &
+
+nohup Rscript ./mr_exenatide/R/mr_ivw_fclr_fliml_ivwpc_glp1r_t2dm.R &> nohup_mr_ivw_fclr_fliml_ivwpc_glp1r_t2dm.log &
+
 ```
 
 5. Combine results from all analyses

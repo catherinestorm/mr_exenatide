@@ -26,6 +26,6 @@ exp0 <- read_exposure_data(
 
 exp0 <- subset(exp0, exp0$pval.exposure < 5e-8)
 
-exp_to_keep <- read_csv("genes_for_analysis.csv")
+exp_to_keep <- read_csv("data/genes_for_analysis.csv")
 exp <- subset(exp0, (exp0$exposure %in% exp_to_keep$ensembl))
 
