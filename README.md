@@ -65,7 +65,14 @@ done < non_pd_outcomes.txt
 ```
 
 
-2. Download and prepare the data for the Mendelian randomization analysis.
+2. Download data. Prepare the data for the Mendelian randomization analysis.
+To download the Parkinson's disease risk, age at onset and progression GWAS data, go to the below links:
+
+Download Parkinson's disease risk GWAS data: https://bit.ly/2ofzGrk
+Download Parkinson's disease age at onset GWAS data: http://pdgenetics.org/resources
+Download Parkinson's disease progression GWAS data: https://pdgenetics.shinyapps.io/pdprogmetagwasbrowser/
+NOTE: make sure to untick the P < 0.05 box in order to get the full summary statistics for progression
+
 ```
 nohup bash ./mr_exenatide/shell/data_download.sh &> nohup_data_download.log &
 
