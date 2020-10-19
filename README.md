@@ -18,6 +18,7 @@ If you use the code, please cite: [Storm CS, Kia DA, Almramhi M, Athauda D, Inte
 1. Set up work space. Specify exposure and outcome datasets.
 
 ```mkdir data
+mkdir data
 mkdir data/progression
 mkdir results
 mkdir results/plots
