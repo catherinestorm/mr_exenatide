@@ -29,7 +29,7 @@ psychencode$chr_pos <- str_c(psychencode$chr, ":",psychencode$position)
 
 
 ## read in pd risk meta5 gwas data
-nalls2019 <- read_tsv(gzfile("data/meta_no23.tbl.gz"))
+nalls2019 <- read_tsv("nallsEtAl2019_excluding23andMe_allVariants.tab")
 
 nalls2019 <- left_join(nalls2019, eqtlgen[,c("chr_pos", "rsid_eqtlgen")], by = c("MarkerName" = "chr_pos"))
 nalls2019 <- left_join(nalls2019, psychencode[,c("chr_pos", "rsid_psychencode")], by = c("MarkerName" = "chr_pos"))
@@ -84,7 +84,7 @@ for (i in 1:length(file_list_res)) {
 
 
 ## read in t2dm risk gwas data
-t2dm <- read_csv("data/Xue_et_al_T2D_META_Nat_Commun_2018.txt")
+t2dm <- read_tsv("data/Xue_et_al_T2D_META_Nat_Commun_2018")
 t2dm$chr_pos <- str_c("chr", t2dm$CHR, ":", t2dm$BP)
 
 t2dm <- left_join(t2dm, eqtlgen[,c("chr_pos", "rsid_eqtlgen")], by = "chr_pos")
