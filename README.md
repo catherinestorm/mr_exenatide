@@ -65,8 +65,10 @@ done < non_pd_outcomes.txt
 ```
 
 
-2. Prepare the data for the Mendelian randomization analysis.
+2. Download and prepare the data for the Mendelian randomization analysis.
 ```
+nohup bash ./mr_exenatide/shell/data_download.sh &> nohup_data_download.log &
+
 nohup Rscript ./mr_exenatide/R/data_prep_eqtl.R &> nohup_data_prep_eqtl.log &
 
 nohup Rscript ./mr_exenatide/R/data_prep_outcome_gwas.R &> nohup_data_prep_outcome_gwas.log &
