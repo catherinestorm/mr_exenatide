@@ -3,6 +3,8 @@ library(readr)
 
 # EQTLGEN
 
+# download 
+
 # load eqtlgen data
 eqtlgen0 <- read_tsv(gzfile("data/2019-12-11-cis-eQTLsFDR0.05-ProbeLevel-CohortInfoRemoved-BonferroniAdded.txt.gz"), col_types=cols(.default="c"))
 
@@ -48,10 +50,10 @@ eqtlgen <- full
 
 # PSYCHENCODE
 
-psychencode0 <- read_tsv("psychencode/DER-08a_hg19_eQTL.significant.txt", col_types=cols(.default="c"))
+psychencode0 <- read_tsv("data/DER-08a_hg19_eQTL.significant.txt", col_types=cols(.default="c"))
 
 # alt allele == effect allele
-alleles <- read_tsv("psychencode/SNP_Information_Table_with_Alleles.txt", col_types=cols(.default="c"))
+alleles <- read_tsv("data/SNP_Information_Table_with_Alleles.txt", col_types=cols(.default="c"))
 
 
 # add allele data
