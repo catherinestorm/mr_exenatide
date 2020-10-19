@@ -15,7 +15,7 @@ If you use the code, please cite:
 
 
 
-1. Set up work space. Specify exposure and outcome datasets. Data Prep. ADD EQTL DATA PREP AND GWAS DATA PREP.
+1. Set up work space. Specify exposure and outcome datasets.
 
 ```mkdir data
 mkdir data/progression
@@ -65,7 +65,7 @@ done < non_pd_outcomes.txt
 ```
 
 
-2. Prepare the data for the Mendelian randomization analysis. Where to download, code to process data.
+2. Prepare the data for the Mendelian randomization analysis.
 ```
 nohup Rscript ./mr_exenatide/R/data_prep_eqtl.R &> nohup_data_prep_eqtl.log &
 
