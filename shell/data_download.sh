@@ -39,6 +39,6 @@ unzip nallsEtAl2019_excluding23andMe_allVariants.tab.zip
 
 # download Parkinson's disease progression GWAS data
 # go to the below link and download the relevant data
-# MAKE SURE TO UNTICK WITH P < 0.05 BOX IN ORDER TO GET THE FULL SUMMARY STATISTICS
+# MAKE SURE TO UNTICK THE P < 0.05 BOX IN ORDER TO GET THE FULL SUMMARY STATISTICS
 # https://pdgenetics.shinyapps.io/pdprogmetagwasbrowser/
 
