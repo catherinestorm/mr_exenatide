@@ -3,10 +3,10 @@
 
 
 ## Introduction
-These scripts were used in a Mendelian randomization analysis of exenatide in Parkinson's disease. Full methods can be found [here]().
+These scripts were used in a Mendelian randomization analysis of exenatide in Parkinson's disease. Full methods can be found [here (link will be added soon)]().
 
 ## Citation
-If you use the code, please cite: [Storm CS, Kia DA, Almramhi M, Athauda D, International Parkinson’s Disease Genomics Consortium (IPDGC), Burgess S, Foltynie T, Wood NW. "Predicting the efficacy of exenatide in Parkinson’s disease using genetics – a Mendelian randomization study." bioRxiv. 2020.]()
+If you use the code, please cite: [Storm CS, Kia DA, Almramhi M, Athauda D, International Parkinson’s Disease Genomics Consortium (IPDGC), Burgess S, Foltynie T, Wood NW. "Predicting the efficacy of exenatide in Parkinson’s disease using genetics – a Mendelian randomization study." medRxiv. 2020. (link will be added soon.)]()
 
 
 
